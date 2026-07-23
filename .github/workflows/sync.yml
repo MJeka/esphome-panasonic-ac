@@ -6,22 +6,21 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Разрешаем боту сохранять изменения в репозиторий
+  contents: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: true
-
-      - name: Sync with upstream
+      - name: Sync Fork with Upstream
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Клонируем репозиторий с токеном авторизации
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git .
+          
+          # Настраиваемupstream и сливаем изменения
           git remote add upstream https://github.com/DomiStyle/esphome-panasonic-ac.git
           git fetch upstream
           git checkout master
