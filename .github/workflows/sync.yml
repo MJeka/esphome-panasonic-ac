@@ -1,0 +1,23 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Запускается автоматически каждый день в полночь (UTC)
+  workflow_dispatch: # Добавляет кнопку ручного запуска во вкладке Actions
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Un-deepen repo
+        run: git fetch --unshallow || true
+      - name: Run GitHub Sync Fork Action
+        uses: tgymnich/fork-sync@v1.8
+        with:
+          owner: DomiStyle # Владелец оригинального репозитория
+          repo: esphome-panasonic-ac # Имя оригинального репозитория
+          head: master # Ветка оригинала, откуда забирать изменения
+          base: master # Твоя ветка, куда применять изменения
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
